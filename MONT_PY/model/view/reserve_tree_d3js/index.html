@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSON into tree layout</title> <!-- http://bl.ocks.org/anotherjavadude/2964485 -->
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <style>
+
+    body {font-family: monospace; line-height: 160%; font-size: 18px; }
+
+    svg {     
+      font: 14px monospace;
+      fill       : #333;
+    }
+    .link {
+        fill: none;
+        stroke: #eee;
+        stroke-width: 1.5px;
+    }
+    button {border: 1px dotted #ccc; background: white; font-family: monospace; padding: 10px 20px; font-size: 18px; margin: 20px 10px 20px 0; color: red;}
+    button:focus { background-color:yellow; outline: none;}
+    nav {display: block; position: fixed; left: 10px; top: 10px; background: transparent; ;}
+  
+    </style>
+
+</head>
+
+<body>
+
+  <nav>
+    <button id="tree">Tree</button>
+    <button id="cluster">Cluster</button>
+  </nav>
+
+  <div id="viz"></div>
+
+  <script type="text/javascript">
+
+      //JSON object with the data
+      var treeData = {"name" : "ROOT", "info" : "test", "children" : [
+              {"name" : "A", "children" : [ 
+                      {"name" : "A 01" }, 
+                      {"name" : "A 02" }, 
+                      {"name" : "A 03" }, 
+                      {"name" : "A 04" }, 
+                      {"name" : "A 05" }
+                  ] }, 
+              {"name" : "B", "children" : [ 
+                      {"name" : "B 01" }, 
+                      {"name" : "B 02", "children" : [ 
+                              {"name" : "B 02.1" }, 
+                              {"name" : "B 02.2" }, 
+                              {"name" : "B 02.3" }, 
+                              {"name" : "B 02.4" }
+                          ]}, 
+                      {"name" : "B 03" }, 
+                      {"name" : "B 04" }, 
+                      {"name" : "B 05" }] }, 
+              {"name" : "C", "children": [
+                      {"name" : "C 01", "children" :[
+                              {"name" : "C 01.1" }, 
+                              {"name" : "C 01.2" },
+                              {"name" : "C 01.3" },
+                              {"name" : "C 01.4" },
+                              {"name" : "C 01.5" }
+                          ]}] },
+              {"name" : "D", "children" : [ 
+                      {"name" : "D 01" }, 
+                      {"name" : "D 02" }, 
+                      {"name" : "D 03", "children" : [ 
+                              {"name" : "D 03.1" }, 
+                              {"name" : "D 03.2" }
+                          ]},  
+                      {"name" : "D 04" }
+                  ] }
+          ]};
+
+      // width and height
+      var w = 900;
+      var h = 500;
+
+      update(2);
+
+      d3.select("#tree")
+      .on("click", function(d,i) {
+          update(2)});
+      d3.select("#cluster")
+      .on("click", function(d,i) {
+          update(1)});
+
+
+      function update(type) {
+      
+          d3.select("svg")
+          .remove();
+
+          // Create a svg canvas
+          var vis = d3.select("#viz").append("svg:svg")
+          .attr("width", w)
+          .attr("height", h)
+          .append("svg:g")
+          .attr("transform", "translate(60, 0)"); 
+
+
+          if (type==1) 
+              var layout = d3.layout.cluster().size([h,w-100]);
+          else
+              var layout = d3.layout.tree().size([h,w-100]);
+
+          var diagonal = d3.svg.diagonal()
+          // change x and y (for the left to right tree)
+          .projection(function(d) { return [d.y, d.x]; });
+
+          // Preparing the data for the tree layout, convert data into an array of nodes
+          var nodes = layout.nodes(treeData);
+          // Create an array with all the links
+          var links = layout.links(nodes);
+
+          var link = vis.selectAll("pathlink")
+          .data(links)
+          .enter().append("svg:path")
+          .attr("class", "link")
+          .attr("d", diagonal)
+
+          var node = vis.selectAll("g.node")
+          .data(nodes)
+          .enter().append("svg:g")
+          .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+
+          // Add the dot at every node
+          node.append("svg:circle")
+          .attr("r", 1.5);
+
+          // place the name attribute left or right depending if children
+          node.append("svg:text")
+          .attr("dx", function(d) { return d.children ? -8 : 8; })
+          .attr("dy", 3)
+          .attr("text-anchor", function(d) { return d.children ? "end" : "start"; })
+          .text(function(d) { return d.name; });
+      }
+
+  </script>
+</body>
+</html>
