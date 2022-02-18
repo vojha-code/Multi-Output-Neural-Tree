@@ -4,6 +4,6 @@ We propose an algorithm and a new method to tackle the classification problems. 
 
 <img src="https://github.com/vojha-code/Multi-Output-Neural-Tree/blob/main/results/MONT.png" alt="MONT" width="600">
 
-<img src="https://github.com/vojha-code/Multi-Output-Neural-Tree/blob/main/results/Pareto_Front.png" alt="MONT" width="200" height="200"> <img src="https://github.com/vojha-code/Multi-Output-Neural-Tree/blob/main/results/Results.png" alt="MONT" width="200" height="200">
+<img src="https://github.com/vojha-code/Multi-Output-Neural-Tree/blob/main/results/Pareto_Front.png" alt="MONT" width="300" height="200"> <img src="https://github.com/vojha-code/Multi-Output-Neural-Tree/blob/main/results/Results.png" alt="MONT" width="300" height="200">
 
 
